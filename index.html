@@ -123,31 +123,6 @@
             background: #444;
             border-color: #aaa;
         }
-        /* [ID: CSS-DEBUG] デバッグパネルスタイル */
-        #debug-panel {
-            margin-top: 20px;
-            background: #111;
-            border: 1px dashed #444;
-            border-radius: 4px;
-            padding: 10px;
-            font-size: 11px;
-            text-align: left;
-            color: #00ffcc;
-            font-family: monospace;
-            line-height: 1.4;
-        }
-        #debug-panel h4 {
-            margin: 0 0 6px 0;
-            font-size: 11px;
-            color: #ffcc00;
-            border-bottom: 1px solid #333;
-            padding-bottom: 2px;
-        }
-        .dbg-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-        }
     </style>
 </head>
 <body>
@@ -175,23 +150,6 @@
         
         <div class="controls">
             [進む: テキスト枠をタップ / Enterキー] ｜ [聞き直し: Rキー]
-        </div>
-
-        <!-- [ID: UI-DEBUG] デバッグパネル -->
-        <div id="debug-panel">
-            <h4>🐛 DEV DEBUG [ID: PANEL-STATUS / Ver. 20261028_13]</h4>
-            <div class="dbg-grid">
-                <div>年代: <span id="dbg-era">TITLE</span></div>
-                <div>名前: <span id="dbg-name">-</span></div>
-                <div>種族: <span id="dbg-race">-</span></div>
-                <div>役割: <span id="dbg-role">-</span></div>
-                <div>技術: <span id="dbg-tech">-</span></div>
-                <div>障害: <span id="dbg-injury">false</span></div>
-                <div>配偶: <span id="dbg-partner">-</span></div>
-                <div>遭遇: <span id="dbg-encounter">-</span></div>
-                <div>秘密: <span id="dbg-secret">false</span></div>
-                <div>信頼: <span id="dbg-trust">5</span></div>
-            </div>
         </div>
     </div>
 
@@ -235,7 +193,7 @@
             FORTIES_MIGRATION: "23scene_forties_future_migration.jpg",
             FORTIES_CARRYON: "23scene_forties_future_carryon.jpg",
             ENDING_TRUST: "24scene_ending_trust.jpg",
-            ENDING_DEATH: "image_d81e08.png" // ← ご指定いただいた通常エンディング画像に差し替え
+            ENDING_DEATH: "image_d81e08.png"
         };
 
         let audioCtx = null;
@@ -437,19 +395,6 @@
             }
         }
 
-        function updateDebugPanel() {
-            document.getElementById('dbg-era').innerText = state;
-            document.getElementById('dbg-name').innerText = player.name || "-";
-            document.getElementById('dbg-race').innerText = player.race ? player.race.substring(0,4) : "-";
-            document.getElementById('dbg-role').innerText = player.role || "-";
-            document.getElementById('dbg-tech').innerText = player.techChoice || "-";
-            document.getElementById('dbg-injury').innerText = player.hasInjury;
-            document.getElementById('dbg-partner').innerText = player.partnerChoice || "-";
-            document.getElementById('dbg-encounter').innerText = player.encounterChoice || "-";
-            document.getElementById('dbg-secret').innerText = player.hasSecret;
-            document.getElementById('dbg-trust').innerText = player.trust;
-        }
-
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -472,7 +417,6 @@
             const friend = friendCandidates[Math.floor(Math.random() * friendCandidates.length)];
             player.friendName = friend.name;
             player.friendGender = friend.gender;
-            updateDebugPanel();
         }
 
         function progress() {
@@ -664,7 +608,6 @@
                     resetToTitle();
                 }
             }
-            updateDebugPanel();
         }
 
         function resetToTitle() {
@@ -683,12 +626,10 @@
                 hasInjury: false, trust: 5, artContribution: "",
                 encounterChoice: "", tribeFutureChoice: "", legacyChoice: ""
             };
-            updateDebugPanel();
         }
 
         function showNamingConfirmation() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             const raceDesc = raceCatalog.find(r => r.id === player.race).desc;
             const promptText = `生まれた赤ん坊を抱き上げて、長老が顔をのぞきこみます。\n\nあなたは、${player.raceName}（${raceDesc}）の血を引いて生まれました。\n\nそして長老は、あなたに『${player.name}』という名前をつけました。\nその名には、「${player.meaning}」という意味があります。\n\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = promptText;
@@ -721,7 +662,6 @@
 
         function showTenYearsEvent() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("TEENS_FOREST");
             const intro = `時がすぎて、${player.name}は10歳になりました。\nある日、はじめて大人の手を離れて、洞窟のすぐ外の森へ出かけます。\n\nふと、草むらのむこうから聞いたことのない獣の声と、いやな気配が聞こえてきました。\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -748,7 +688,6 @@
 
         function showTenYearsDailyChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("TEENS_PLAY");
             const intro = `日々のなかで、あなたは同じ年の『${player.friendName}』と一緒にすごすことが多くなりました。\nおひさまのあたたかい昼下がり、大人が働いているそばで、あなたはどうすごしますか？\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -777,7 +716,6 @@
 
         function showTenYearsExclusionChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("TEENS_LEFTOUT");
             const intro = `年を重ねるにつれて、子どもたちのあいでも作業の早い遅いが出るようになってきました。\nある夕方、小石をうまく拾えなかった子どものことが、まわりのみんなから仲間外れにされています。\n\nその子はひとり、悲しそうに地面を見ています。あなたは声をかけますか？\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -808,7 +746,6 @@
 
         function showTenYearsBeastChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("TEENS_BEAST");
             const intro = `10代の半ば、大人たちと一緒に大きな沼地へ出かけたときのことです。\n突然、大きなうなり声とともに、鋭いキバを持つサーベルタイガーが茂みから飛び出してきました！\n\n目がくらむような恐怖の中、後ろには『${player.friendName}』がこわばって立っています。\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -838,7 +775,6 @@
 
         function showTwentiesRoleChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("TWENTIES_ROLE");
             const intro = `あなたは20代を迎え、いよいよ村の中で本格的な役割を担う年齢になりました。\n村のために、どの役割を選択しますか？\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -871,7 +807,6 @@
 
         function showTwentiesCraftChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("TWENTIES_CRAFT");
             const intro = `20代のなかば、集落の暮らしをもっと良くするために、あなたは新しい工夫や道具づくりに挑戦することにしました。\nあなたが一番力を入れて取り組む挑戦は何ですか？\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -901,7 +836,6 @@
 
         function showTwentiesDisputeChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("DISPUTE_START");
             const intro = `ある日、ほかの場所からやってきた別の人たちと、縄張りをめぐる大きな争いが起きてしまいました。\n混乱のなか、ずっと一緒に育ってきた『${player.friendName}』がケガをして倒れてしまいます。\n\n敵がすぐ目の前まで迫る中、あなたはどう行動しますか？\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -950,7 +884,6 @@
 
         function showTwentiesPartnerChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("PARTNER_NIGHT");
             const intro = `嵐のような争いが過ぎ去り、晴れた月明かりの夜が訪れました。\n洞窟の外で、主人公と長老が焚き火を囲んで静かに語り合っています。\n\n長老があなたに静かに問いかけます。\n\n「お前はこれから誰と共に歩み、この太古のいとなみを繋いでいくのだ？」\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -988,7 +921,6 @@
 
         function showTwentiesConflictEvent() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("WINTER_MEAT");
             const isSingle = (player.partnerChoice === 'alone');
             let intro = isSingle ? 
@@ -1023,7 +955,6 @@
 
         function showThirtiesCultureEvent() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setEra("THIRTIES");
             setSceneImageKey("FESTIVAL");
             const intro = `季節がめぐり、${player.name}は30歳になりました。みんなを引っ張る中心人物です。\n秋の夜、みんなの安全と豊かさを祈る大きなお祭りを開くことになりました。どう盛り上げますか？\n(下から選択肢を選んでください)`;
@@ -1055,7 +986,6 @@
 
         function showThirtiesSecretEvent() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             if (player.hasSecret) {
                 setSceneImageKey("THIRTIES_SECRET");
                 const intro = `お祭りの数日後、古い洞窟の奥から昔の干し肉の袋が見つかり、うわすがささやかれはじめました。\n(下から選択肢を選んでください)`;
@@ -1095,7 +1025,6 @@
 
         function showThirtiesEncounterEvent() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("ENCOUNTER_RIVER");
             const intro = `森の見回りで、かわいた川の底で動けなくなっている「ほかの集落の若い人」を見つけました。\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -1137,12 +1066,8 @@
             progress();
         }
 
-        // ==========================================
-        // [ID: SEC-THIRTIES-NEXTGEN] 30代終わり・大寒波イベント
-        // ==========================================
         function showThirtiesNextGenEvent() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("WINTER_COLD");
             const intro = `30代の終わりごろ、大変なことが起きてしまいました。\nものすごい大寒波がやってきて、子どもたちが次々に熱を出し、寒さに震えながら倒れてしまったのです。\n\n薬も薪も足りません。長老のひとりであるあなたはどう行動しますか？\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -1248,11 +1173,10 @@
 
         function showFortiesEncounterEffect() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             let intro = "";
             if (player.encounterChoice === 'save') {
                 setSceneImageKey("FORTIES_TRADE");
-                intro = `── 40代を迎えた${player.name}は、集落を導く経験豊かな長老となっていました。\n\nある日、かつて川底で手当てした他部族の若者が、立派な使いとして訪れます。\n「あのときの恩を忘れません」と、彼らの部族から貴重な塩や毛皮が持ち込まれ、二つの部族間に活発な『交易路』が開通しました。(次へ)`;
+                intro = `── 40代を迎えた${player.name}は、集落を導く経験豊かな長老となっていました。\n\nある日、かつて川底で手当てした他部族の若者から、立派な使いが訪れます。\n「あのときの恩を忘れません」と、彼らの部族から貴重な塩や毛皮が持ち込まれ、二つの部族間に活発な『交易路』が開通しました。(次へ)`;
             } else if (player.encounterChoice === 'leave_food') {
                 setSceneImageKey("FORTIES_PEACE");
                 intro = `── 40代を迎えた${player.name}は、集落を導く経験豊かな長老となっていました。\n\nある日、森の境界で他部族と巡り会います。彼らは「昔、命を救われた干し肉と水の恩がある」と微笑み、互いの技や土器を分かち合う『平和的な縄文・交易の文化』が誕生しました。(次へ)`;
@@ -1276,7 +1200,6 @@
 
         function showFortiesTribeFutureChoice() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("FORTIES_FUTURE");
             const intro = `長い年月を経て、気候が大きく変わり始めています。獲物の群れが減り、洞窟の周囲の資源も枯渇しつつあります。\n集落の長老として、${player.name}は部族の生き残りをかけた【最後の重大な方針】を言い渡さなければなりません。\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -1321,7 +1244,6 @@
 
         function showFortiesEvent() {
             state = "CHOICE_WAIT";
-            updateDebugPanel();
             setSceneImageKey("FORTIES_TEACH");
             const intro = `年月は流れ、${player.name}も50代を迎えました。\n白髪が混じり、静かに焚き火を見つめるあなたの周りには、次の時代を担う子どもたちが集まっています。\n\n最後に、子どもたちの心へ最も強く刻み込みたい「言葉」を選んでください。\n(下から選択肢を選んでください)`;
             document.getElementById('text-box').innerText = intro;
@@ -1348,7 +1270,6 @@
 
         function showEnding() {
             state = "ENDING";
-            updateDebugPanel();
             
             let endingTheme = "";
             if (player.legacyChoice === 'skills') {
@@ -1396,8 +1317,6 @@
                 repeatText();
             }
         });
-
-        updateDebugPanel();
     </script>
 </body>
 </html>
